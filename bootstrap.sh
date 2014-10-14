@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 
-webstorm_url="http://download.jetbrains.com/webstorm/WebStorm-8.0.4.tar.gz"
-gradle_url="https://services.gradle.org/distributions/gradle-1.12-bin.zip"
-program_path="/home/vagrant/program"
-download_path="/vagrant/.download"
-temp_path="~/temp"
-test="ftp://ftp.sunet.se/pub/www/utilities/curl/curl-7.38.0.tar.gz"
-
 # constants
 gradle_version=1.12
+webstorm_version=8.0.5
+webstorm_icon_name="Webstorm.desktop"
+
+# Url
+webstorm_url="http://download.jetbrains.com/webstorm/WebStorm-${webstorm_version}.tar.gz"
+gradle_url="https://services.gradle.org/distributions/gradle-${gradle_version}-bin.zip"
+
+# Path
+program_path="/home/vagrant/program"
+download_path="/vagrant/.download" 
+webstorm_icon_name_path="$HOME/Desktop/$webstorm_icon_name"
 
 # Help functions
 
@@ -24,7 +28,7 @@ function file_download()
                 ;;
 
                 unzip)
-                /usr/bin/unzip "$download_path/$(basename "$1")"  -d "$dest_path"
+                /usr/bin/unzip "$download_path/$(basename "$1")" -d "$dest_path"
                 ;;
 
                 *)
@@ -35,11 +39,11 @@ function file_download()
 
 function install_gradle() {
         mkdir /opt/gradle
-        wget -N http://services.gradle.org/distributions/gradle-${gradle_version}-all.zip -P "$download_path" 
+        wget -N $gradle_url -P "$download_path" 
         unzip -oq $download_path/gradle-${gradle_version}-all.zip -d /opt/gradle
         ln -sfnv /opt/gradle/gradle-${gradle_version} /opt/gradle/latest
         printf "export GRADLE_HOME=/opt/gradle/latest\nexport PATH=\$PATH:\$GRADLE_HOME/bin" > /etc/profile.d/gradle.sh
-        . /etc/profile.d/gradle.sh
+        . /etc/profile.d/gradle.shgradle_url
         chmod +x /etc/profile.d/gradle.sh
 }
 
@@ -53,20 +57,31 @@ echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selecti
 apt-get -qq -y install oracle-java8-installer oracle-java8-set-default
 
 # Install WebStorm
-file_download "${webstorm_url}" "webstorm"
+file_download "${webstorm_url}" "webstorm" "untar"
+
+# Web storm desktop icon
+temp=$(/usr/bin/find $program_path -iname webstorm.sh)
+echo $temp
+webstorm_install_path=$(dirname "$temp")
+echo "[Desktop Entry]" > $webstorm_icon_name_path
+echo "Type=Application" >> $webstorm_icon_name_path
+echo "Name=Webstorm" >> $webstorm_icon_name_path
+echo "Icon=$webstorm_install_path/webide.png" >> $webstorm_icon_name_path
+echo "Exec=$webstorm_install_path/webstorm.sh" >> $webstorm_icon_name_path
+echo "Exec=$webstorm_install_path" >> $webstorm_icon_name_path
+echo "Terminal=false" >> $webstorm_icon_name_path
 
 #Install gradle
-#file_download "${gradle_url}" "gradle"
-#echo 'export PATH=${PATH}:"${program_path}/gradle"' >> ${HOME}/.bash_profile
+install_gradle
 
 #Install eclipse
-sudo apt-get install eclipse
+sudo apt-get -qq -y install eclipse
 
 #Install eclipse gradle plugin
 eclipse -nosplash -application org.eclipse.equinox.p2.director -repository http://dist.springsource.com/release/TOOLS/gradle -installIU org.springsource.ide.eclipse.gradle.feature.feature.group
 
 #Install python with PIP and VirtualEnv
-sudo apt-get install python-pip python-virtualenv
+apt-get -qq -y install python-pip python-virtualenv
 
 #Install chrome
-sudo apt-get install chromium-browser
+apt-get -qq -y install chromium-browser
