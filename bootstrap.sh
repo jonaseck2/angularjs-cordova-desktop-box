@@ -7,18 +7,18 @@ webstorm_icon_name="Webstorm.desktop"
 
 # Url
 webstorm_url="http://download.jetbrains.com/webstorm/WebStorm-${webstorm_version}.tar.gz"
-gradle_url="https://services.gradle.org/distributions/gradle-${gradle_version}-bin.zip"
+gradle_url="https://services.gradle.org/distributions/gradle-${gradle_version}-all.zip"
 
 # Path
 program_path="/home/vagrant/program"
 download_path="/vagrant/.download" 
-webstorm_icon_name_path="$HOME/Desktop/$webstorm_icon_name"
+webstorm_icon_name_path="/home/vagrant/Desktop/$webstorm_icon_name"
 
 # Help functions
 
 function file_download()
 {
-        wget $1 -N -P "$download_path"
+        wget $1 --no-verbose -N -P "$download_path"
         dest_path="$program_path"/$2
         mkdir -p "$dest_path"
 
@@ -43,7 +43,7 @@ function install_gradle() {
         unzip -oq $download_path/gradle-${gradle_version}-all.zip -d /opt/gradle
         ln -sfnv /opt/gradle/gradle-${gradle_version} /opt/gradle/latest
         printf "export GRADLE_HOME=/opt/gradle/latest\nexport PATH=\$PATH:\$GRADLE_HOME/bin" > /etc/profile.d/gradle.sh
-        . /etc/profile.d/gradle.shgradle_url
+        . /etc/profile.d/gradle.sh
         chmod +x /etc/profile.d/gradle.sh
 }
 
@@ -61,14 +61,13 @@ file_download "${webstorm_url}" "webstorm" "untar"
 
 # Web storm desktop icon
 temp=$(/usr/bin/find $program_path -iname webstorm.sh)
-echo $temp
 webstorm_install_path=$(dirname "$temp")
 echo "[Desktop Entry]" > $webstorm_icon_name_path
 echo "Type=Application" >> $webstorm_icon_name_path
 echo "Name=Webstorm" >> $webstorm_icon_name_path
 echo "Icon=$webstorm_install_path/webide.png" >> $webstorm_icon_name_path
 echo "Exec=$webstorm_install_path/webstorm.sh" >> $webstorm_icon_name_path
-echo "Exec=$webstorm_install_path" >> $webstorm_icon_name_path
+echo "Path=$webstorm_install_path" >> $webstorm_icon_name_path
 echo "Terminal=false" >> $webstorm_icon_name_path
 
 #Install gradle
@@ -81,7 +80,7 @@ sudo apt-get -qq -y install eclipse
 eclipse -nosplash -application org.eclipse.equinox.p2.director -repository http://dist.springsource.com/release/TOOLS/gradle -installIU org.springsource.ide.eclipse.gradle.feature.feature.group
 
 #Install python with PIP and VirtualEnv
-apt-get -qq -y install python-pip python-virtualenv
+sudo apt-get -qq -y install python-pip python-virtualenv
 
 #Install chrome
-apt-get -qq -y install chromium-browser
+sudo apt-get -qq -y install chromium-browser
