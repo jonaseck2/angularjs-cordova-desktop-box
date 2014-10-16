@@ -5,8 +5,20 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # SSH
+  config.ssh.forward_agent = true
+  config.ssh.forward_x11 = true
+
+  # Defines shell as the box provision
+  config.vm.provision :shell, path: 'bootstrap.sh', privileged: true
+  config.vm.provision :shell, path: '.bootstrap/bootstrap.sh'
+  config.vm.provision :shell, path: '.bootstrap/android.sh', privileged: false
+  config.vm.provision :shell, path: '.bootstrap/npm.sh', privileged: false
+
+  # Hack to fix the "stdin: is not a tty" bug
+  config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+
   config.vm.provider "virtualbox" do |vb|
-    config.vm.provision :shell, path: 'bootstrap.sh', privileged: true
     vb.gui = true
 	vb.customize ["modifyvm", :id, "--memory", "2048"]
     vb.customize ["modifyvm", :id, "--cpus", "2"]
@@ -15,7 +27,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.customize ["modifyvm", :id, "--ioapic", "on"]
     vb.customize ["modifyvm", :id, "--vram", "128"]
     vb.customize ["modifyvm", :id, "--hwvirtex", "on"]
-  end
+
+  # Allow USB on the box
+    vb.customize ['modifyvm', :id, '--usb', 'on']
+	end
 
   # All Vagrant configuration is done here. The most common configuration
   # options are documented and commented below. For a complete reference,
