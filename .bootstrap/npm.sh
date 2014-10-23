@@ -6,13 +6,13 @@ if [ ! -d "${HOME}/.npm-packages" ] ; then
 	sudo apt-get -qqy update
 	sudo apt-get -qqy install nodejs
 
-	echo 'NPM_PACKAGES="${HOME}/.npm-packages"' >> ${HOME}/.bashrc
-	echo 'PATH=${PATH}:${NPM_PACKAGES}/bin' >> ${HOME}/.bashrc
-	echo 'NODE_PATH="${NPM_PACKAGES}/lib/node_modules:${NODE_PATH}"' >> ${HOME}/.bashrc
+	echo 'NPM_PACKAGES="${HOME}/.npm-packages"' >> ${HOME}/.profile
+	echo 'PATH=${PATH}:${NPM_PACKAGES}/bin' >> ${HOME}/.profile
+	echo 'NODE_PATH="${NPM_PACKAGES}/lib/node_modules:${NODE_PATH}"' >> ${HOME}/.profile
 	echo 'prefix=${HOME}/.npm-packages' >> ${HOME}/.npmrc
-	echo 'MANPATH="$NPM_PACKAGES/share/man:$(manpath)"' >> ${HOME}/.bashrc
+	echo 'MANPATH="$NPM_PACKAGES/share/man:$(manpath)"' >> ${HOME}/.profile
 
-	source ${HOME}/.bashrc
+	source ${HOME}/.profile
 
 	npm install -g bower grunt-cli yo cordova generator-angularjs-cordova
 	#workaround for missing deps when executing cordova build

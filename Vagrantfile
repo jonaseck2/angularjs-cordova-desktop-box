@@ -10,10 +10,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.forward_x11 = true
 
   # Defines shell as the box provision
-  config.vm.provision :shell, path: 'bootstrap.sh', privileged: true
-  config.vm.provision :shell, path: '.bootstrap/bootstrap.sh'
+  config.vm.provision :shell, path: 'bootstrap.sh'
   config.vm.provision :shell, path: '.bootstrap/android.sh', privileged: false
   config.vm.provision :shell, path: '.bootstrap/npm.sh', privileged: false
+  config.vm.provision :shell, path: '.bootstrap/sublime.sh'
 
   # Hack to fix the "stdin: is not a tty" bug
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"

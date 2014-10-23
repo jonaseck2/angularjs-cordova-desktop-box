@@ -10,7 +10,6 @@ webstorm_url="http://download.jetbrains.com/webstorm/WebStorm-${webstorm_version
 gradle_url="https://services.gradle.org/distributions/gradle-${gradle_version}-all.zip"
 
 # Path
-program_path="/home/vagrant/program"
 download_path="/vagrant/.download" 
 webstorm_icon_name_path="/home/vagrant/Desktop/$webstorm_icon_name"
 
@@ -18,69 +17,71 @@ webstorm_icon_name_path="/home/vagrant/Desktop/$webstorm_icon_name"
 
 function file_download()
 {
-        wget $1 --no-verbose -N -P "$download_path"
-        dest_path="$program_path"/$2
-        mkdir -p "$dest_path"
+        if [ ! -f ${download_path}/${1##*/} ] ; then
+                echo "Downloading $1"
+                mkdir -vp "$download_path"
+                wget "$1" --quiet -P "$download_path"
+        fi
 
-        case "$3" in
-                untar)
-                /bin/tar xzf "$download_path/$(basename "$1")" -C "$dest_path"
-                ;;
+        if [ ! -d ${2} ] ; then
+                echo "Unpacking $1 to $2"
+                mkdir -vp "${2}"
 
-                unzip)
-                /usr/bin/unzip "$download_path/$(basename "$1")" -d "$dest_path"
-                ;;
-
-                *)
-                echo  "$3 not supported"
-        esac
-
-}
-
-function install_gradle() {
-        mkdir /opt/gradle
-        wget -N $gradle_url -P "$download_path" 
-        unzip -oq $download_path/gradle-${gradle_version}-all.zip -d /opt/gradle
-        ln -sfnv /opt/gradle/gradle-${gradle_version} /opt/gradle/latest
-        printf "export GRADLE_HOME=/opt/gradle/latest\nexport PATH=\$PATH:\$GRADLE_HOME/bin" > /etc/profile.d/gradle.sh
-        . /etc/profile.d/gradle.sh
-        chmod +x /etc/profile.d/gradle.sh
+                case "${1##*.}" in
+                        gz)
+                        if [ "${1##*.tar.}" == "gz" ] ; then
+                                tar xzf "$download_path/${1##*/}" -C "$2"
+                        else
+                                gunzip -q -c "$download_path/${1##*/}" > "$2"
+                        fi
+                        ;;
+                        zip)
+                        unzip -qq "$download_path/${1##*/}" -d "$2"
+                esac
+        fi
 }
 
 # Main program
 
 # Install java8
 add-apt-repository -y ppa:webupd8team/java 
-apt-get -y update
+apt-get -qqy update
 echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
 echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections
-apt-get -qq -y install oracle-java8-installer oracle-java8-set-default
+apt-get -qqy install oracle-java8-installer oracle-java8-set-default 2> /dev/null
 
 # Install WebStorm
-file_download "${webstorm_url}" "webstorm" "untar"
+file_download "${webstorm_url}" "/usr/local/lib/webstorm"
+ln -sfnv /usr/local/lib/webstorm/WebStorm-135.1297 /usr/local/lib/webstorm/latest
+ln -sfnv /usr/local/lib/webstorm/latest/bin/webstorm.sh /usr/local/bin/webstorm
+
 
 # Web storm desktop icon
-temp=$(/usr/bin/find $program_path -iname webstorm.sh)
-webstorm_install_path=$(dirname "$temp")
 echo "[Desktop Entry]" > $webstorm_icon_name_path
 echo "Type=Application" >> $webstorm_icon_name_path
 echo "Name=Webstorm" >> $webstorm_icon_name_path
-echo "Icon=$webstorm_install_path/webide.png" >> $webstorm_icon_name_path
-echo "Exec=$webstorm_install_path/webstorm.sh" >> $webstorm_icon_name_path
-echo "Path=$webstorm_install_path" >> $webstorm_icon_name_path
+echo "Icon=/usr/local/lib/webstorm/latest/bin/webide.png" >> $webstorm_icon_name_path
+echo "Exec=/usr/local/lib/webstorm/latest/bin/webstorm.sh" >> $webstorm_icon_name_path
+echo "Path=/usr/local/lib/webstorm/latest/bin/" >> $webstorm_icon_name_path
 echo "Terminal=false" >> $webstorm_icon_name_path
 
 #Install gradle
-install_gradle
+file_download "${gradle_url}" "/usr/local/lib/gradle"
+ln -sfnv /usr/local/lib/gradle/gradle-${gradle_version} /usr/local/lib/gradle/latest
+ln -sfnv /usr/local/lib/gradle/latest/bin/gradle /usr/local/bin/gradle
 
 #Install eclipse
-sudo apt-get -qq -y install eclipse
+apt-get -qqy install eclipse
 
 #Install eclipse gradle plugin
 eclipse -nosplash -application org.eclipse.equinox.p2.director -repository http://dist.springsource.com/release/TOOLS/gradle -installIU org.springsource.ide.eclipse.gradle.feature.feature.group
 
 #Install python with PIP and VirtualEnv
-sudo apt-get -qq -y install python-pip python-virtualenv
+apt-get -qqy install python-pip python-virtualenv
 
 #Install chrome
-sudo apt-get -qq -y install chromium-browser
+apt-get -qqy install chromium-browser
+
+#Install git and vim
+apt-get -qqy install git vim
+git config --system core.editor vi
