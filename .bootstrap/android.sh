@@ -8,13 +8,17 @@ android_device="Nexus S"
 
 if [ ! -d "${HOME}/android-sdk-linux/" ] ; then
 	
-	sudo apt-get -y install ant
+	sudo dpkg --add-architecture i386
+	sudo apt-get -qqy update
+	sudo apt-get -qqy install libncurses5:i386 libstdc++6:i386 zlib1g:i386
 
-	echo 'export ANDROID_SDK_HOME=/vagrant/' >> ${HOME}/.bash_profile
-	echo "export ANDROID_HOME=${HOME}/android-sdk-linux" >> ${HOME}/.bash_profile
-	echo 'export PATH=${PATH}:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools' >> ${HOME}/.bash_profile
+	sudo apt-get -qqy install ant
+
+	echo 'export ANDROID_SDK_HOME=/vagrant/' >> ${HOME}/.bashrc
+	echo "export ANDROID_HOME=${HOME}/android-sdk-linux" >> ${HOME}/.bashrc
+	echo 'export PATH=${PATH}:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools' >> ${HOME}/.bashrc
 	
-	source ${HOME}/.bash_profile
+	source ${HOME}/.bashrc
 
 	mkdir -vp ${ANDROID_SDK_HOME}
 	mkdir -vp /vagrant/.download/

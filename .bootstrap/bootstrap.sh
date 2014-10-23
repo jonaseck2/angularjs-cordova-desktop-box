@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-apt-get -y update
+apt-get -qqy update
 
-apt-get -y install git
-apt-get -y install vim
+apt-get -qqy install git
+apt-get -qqy install vim
