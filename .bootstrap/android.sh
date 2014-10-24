@@ -14,7 +14,6 @@ if [ ! -d "${HOME}/android-sdk-linux/" ] ; then
 
 	sudo apt-get -qqy install ant
 
-	echo 'export ANDROID_SDK_HOME=/vagrant/' >> ${HOME}/.profile
 	echo 'export ANDROID_HOME=${HOME}/android-sdk-linux' >> ${HOME}/.profile
 	echo 'export PATH=${PATH}:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools' >> ${HOME}/.profile
 	
@@ -31,16 +30,9 @@ if [ ! -d "${HOME}/android-sdk-linux/" ] ; then
 fi
 
 if [ ! -d  "${ANDROID_HOME}/platforms/android-19" ] ; then
-	sudo apt-get -y install expect
 
-	expect -c '
-	set timeout -1   ;
-	spawn android update sdk -u --all --filter platform-tool,android-19,build-tools-19.1.0"
-	expect { 
-	"Do you accept the license" { exp_send "y\r" ; exp_continue }
-	eof
-}
-'
+	echo y | android update sdk -u --all --filter "platform-tool,android-19,build-tools-19.1.0"
+
 fi
 
 if [ ! -d "${ANDROID_HOME}/system-images/android-19/default/x86" ] ; then
