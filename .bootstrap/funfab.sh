@@ -43,6 +43,14 @@ function file_download()
 
 # Main program
 
+# Enable autologin
+
+if [ `grep vagrant /etc/lightdm/lightdm.conf.d/20-lubuntu.conf | wc -l` -le 0 ]; then
+   echo autologin-user=vagrant >> /etc/lightdm/lightdm.conf.d/20-lubuntu.conf
+   echo autologin-user-timeout=0 >> /etc/lightdm/lightdm.conf.d/20-lubuntu.conf
+   echo greeter-session=lightdm-gtk-greeter >> /etc/lightdm/lightdm.conf.d/20-lubuntu.conf
+fi
+
 # Install java8
 add-apt-repository -y ppa:webupd8team/java 
 apt-get -qqy update
@@ -51,24 +59,27 @@ echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selecti
 apt-get -qqy install oracle-java8-installer oracle-java8-set-default 2> /dev/null
 
 # Install WebStorm
-file_download "${webstorm_url}" "/usr/local/lib/webstorm"
-ln -sfnv /usr/local/lib/webstorm/WebStorm-135.1297 /usr/local/lib/webstorm/latest
-ln -sfnv /usr/local/lib/webstorm/latest/bin/webstorm.sh /usr/local/bin/webstorm
-
+if [ ! -d "/usr/local/lib/webstorm" ]; then
+   file_download "${webstorm_url}" "/usr/local/lib/webstorm"
+   ln -sfnv /usr/local/lib/webstorm/WebStorm-135.1297 /usr/local/lib/webstorm/latest
+   ln -sfnv /usr/local/lib/webstorm/latest/bin/webstorm.sh /usr/local/bin/webstorm
 
 # Web storm desktop icon
-echo "[Desktop Entry]" > $webstorm_icon_name_path
-echo "Type=Application" >> $webstorm_icon_name_path
-echo "Name=Webstorm" >> $webstorm_icon_name_path
-echo "Icon=/usr/local/lib/webstorm/latest/bin/webide.png" >> $webstorm_icon_name_path
-echo "Exec=/usr/local/lib/webstorm/latest/bin/webstorm.sh" >> $webstorm_icon_name_path
-echo "Path=/usr/local/lib/webstorm/latest/bin/" >> $webstorm_icon_name_path
-echo "Terminal=false" >> $webstorm_icon_name_path
+   echo "[Desktop Entry]" > $webstorm_icon_name_path
+   echo "Type=Application" >> $webstorm_icon_name_path
+   echo "Name=Webstorm" >> $webstorm_icon_name_path
+   echo "Icon=/usr/local/lib/webstorm/latest/bin/webide.png" >> $webstorm_icon_name_path
+   echo "Exec=/usr/local/lib/webstorm/latest/bin/webstorm.sh" >> $webstorm_icon_name_path
+   echo "Path=/usr/local/lib/webstorm/latest/bin/" >> $webstorm_icon_name_path
+   echo "Terminal=false" >> $webstorm_icon_name_path
+fi 
 
 #Install gradle
-file_download "${gradle_url}" "/usr/local/lib/gradle"
-ln -sfnv /usr/local/lib/gradle/gradle-${gradle_version} /usr/local/lib/gradle/latest
-ln -sfnv /usr/local/lib/gradle/latest/bin/gradle /usr/local/bin/gradle
+if [ -f "/usr/local/lib/gradle" ]; then
+   file_download "${gradle_url}" "/usr/local/lib/gradle"
+   ln -sfnv /usr/local/lib/gradle/gradle-${gradle_version} /usr/local/lib/gradle/latest
+   ln -sfnv /usr/local/lib/gradle/latest/bin/gradle /usr/local/bin/gradle
+fi
 
 #Install eclipse
 apt-get -qqy install eclipse

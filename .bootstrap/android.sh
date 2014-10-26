@@ -16,8 +16,6 @@ if [ ! -d "${HOME}/android-sdk-linux/" ] ; then
 
 	echo 'export ANDROID_HOME=${HOME}/android-sdk-linux' >> ${HOME}/.profile
 	echo 'export PATH=${PATH}:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools' >> ${HOME}/.profile
-	
-	source ${HOME}/.profile
 
 	mkdir -vp ${ANDROID_SDK_HOME}
 	mkdir -vp /vagrant/.download/
@@ -28,6 +26,8 @@ if [ ! -d "${HOME}/android-sdk-linux/" ] ; then
 
 	tar -xvzf /vagrant/.download/${android_sdk}
 fi
+
+	source ${HOME}/.profile
 
 if [ ! -d  "${ANDROID_HOME}/platforms/android-19" ] ; then
 
