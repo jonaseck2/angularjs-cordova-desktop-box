@@ -1,4 +1,4 @@
-# angularjs-cordova-box #
+# angularjs-cordova-desktop-box #
 
 A Lubuntu based **vagrant** box provisioned with the cordova development environment for the **android** platform. **All you have to do** is to clone the repository, fire `vagrant up` and add your android device to VirtualBox. After that you are ready to begin your cordova project.
 
@@ -49,8 +49,8 @@ To emulate on device:
 
 ### 4) Build Android APK
 1. run `grunt build`
-2. run `cordova build android`
-The apk file is created in `platform/android/<project name>.apk
+2. run `cordova build android`<br>
+The apk file is created in `platform/android/\<project name\>.apk
 
 ## About ##
 
