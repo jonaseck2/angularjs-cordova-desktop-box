@@ -39,13 +39,18 @@ In order to resolve the `?????? no permissions` problem:
 3. run `cordova create folder-name -n ProjectName`
 4. run `cd folder-name`
 5. run `yo angularjs-cordova`
-
 6. run `sed -i -e s/localhost/0.0.0.0/' Gruntfile.js`
+To host a development web server:
 7. run `grunt serve`
-
+To emulate on device:
 8. run `cordova build`
 9. run `cordova emulate android`
 **That's it.**
+
+### 4) Build Android APK
+1. run `grunt build`
+2. run `cordova build android`
+The apk file is created in `platform/android/<project name>.apk
 
 ## About ##
 
