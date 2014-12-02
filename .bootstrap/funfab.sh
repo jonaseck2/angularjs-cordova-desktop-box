@@ -85,7 +85,26 @@ if [ ! -f "/usr/local/lib/gradle" ]; then
 fi
 
 #Install eclipse
-apt-get -qqy install eclipse
+wget -O eclipse.tar.gz "http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/luna/SR1-RC3/eclipse-java-luna-SR1-RC3-linux-gtk-x86_64.tar.gz"
+tar -zxvf eclipse.tar.gz
+sudo mv eclipse /opt
+sudo ln -s /opt/eclipse/eclipse /usr/bin/eclipse
+sudo touch /usr/share/applications/eclipse.desktop
+sudo sh -c "echo '[Desktop Entry]
+  Version=1.0
+  Name=Eclipse
+  
+  Exec=eclipse
+  Terminal=false
+  Icon=/opt/eclipse/icon.xpm
+  Type=Application
+  Categories=IDE;Development
+  X-Ayatana-Desktop-Shortcuts=NewWindow
+
+[NewWindow Shortcut Group]
+  Name=New Window
+  Exec=eclipse
+  TargetEnvironment=Unity' > /usr/share/applications/eclipse.desktop"
 
 #Install eclipse gradle plugin
 eclipse -nosplash -application org.eclipse.equinox.p2.director -repository http://dist.springsource.com/release/TOOLS/gradle -installIU org.springsource.ide.eclipse.gradle.feature.feature.group
