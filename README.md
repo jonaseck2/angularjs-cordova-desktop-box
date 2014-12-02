@@ -45,12 +45,6 @@ To host a development web server:
 To emulate on device:
 8. run `cordova build`
 9. run `cordova emulate android`
-**That's it.**
-
-### 4) Build Android APK
-1. run `grunt build`
-2. run `cordova build android`<br>
-The apk file is created in `platform/android/\<project name\>.apk
 
 ## About ##
 
