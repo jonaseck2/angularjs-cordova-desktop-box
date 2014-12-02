@@ -51,6 +51,9 @@ if [ `grep vagrant /etc/lightdm/lightdm.conf.d/20-lubuntu.conf | wc -l` -le 0 ];
    echo greeter-session=lightdm-gtk-greeter >> /etc/lightdm/lightdm.conf.d/20-lubuntu.conf
 fi
 
+# Set timezone to Europe/Stockholm
+sudo bash -c 'echo "Europe/Stockholm" > /etc/timezone'
+
 # Install java8
 add-apt-repository -y ppa:webupd8team/java 
 apt-get -qqy update
