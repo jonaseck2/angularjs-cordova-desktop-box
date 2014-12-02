@@ -78,7 +78,7 @@ if [ ! -d "/usr/local/lib/webstorm" ]; then
 fi 
 
 #Install gradle
-if [ -f "/usr/local/lib/gradle" ]; then
+if [ ! -f "/usr/local/lib/gradle" ]; then
    file_download "${gradle_url}" "/usr/local/lib/gradle"
    ln -sfnv /usr/local/lib/gradle/gradle-${gradle_version} /usr/local/lib/gradle/latest
    ln -sfnv /usr/local/lib/gradle/latest/bin/gradle /usr/local/bin/gradle
