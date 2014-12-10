@@ -17,7 +17,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision :shell, path: '.bootstrap/mongo.sh'
   config.vm.provision :shell, path: '.bootstrap/docker.sh' # Docker needs reboot to work and will be installed last
 
-
   # Hack to fix the "stdin: is not a tty" bug
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
