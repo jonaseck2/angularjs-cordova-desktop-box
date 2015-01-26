@@ -8,6 +8,7 @@ webstorm_icon_name="Webstorm.desktop"
 # Url
 webstorm_url="http://download.jetbrains.com/webstorm/WebStorm-${webstorm_version}.tar.gz"
 gradle_url="https://services.gradle.org/distributions/gradle-${gradle_version}-all.zip"
+eclipse_url="http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/luna/SR1-RC3/eclipse-java-luna-SR1-RC3-linux-gtk-x86_64.tar.gz"
 
 # Path
 download_path="/vagrant/.download" 
@@ -19,12 +20,12 @@ function file_download()
 {
         if [ ! -f ${download_path}/${1##*/} ] ; then
                 echo "Downloading $1"
-                mkdir -vp "$download_path"
-                wget "$1" --quiet -P "$download_path"
+                mkdir -vp "${download_path}"
+                wget -O "${download_path}/${1##*/}" $1 --quiet
         fi
 
         if [ ! -d ${2} ] ; then
-                echo "Unpacking $1 to $2"
+                echo "Unpacking ${1##*/} to $2"
                 mkdir -vp "${2}"
 
                 case "${1##*.}" in
@@ -45,7 +46,7 @@ function file_download()
 
 # Enable autologin
 
-if [ `grep vagrant /etc/lightdm/lightdm.conf.d/20-lubuntu.conf | wc -l` -le 0 ]; then
+if [ -f "/etc/lightdm/lightdm.conf.d/20-lubuntu.conf" && `grep vagrant /etc/lightdm/lightdm.conf.d/20-lubuntu.conf | wc -l` -le 0 ]; then
    echo autologin-user=vagrant >> /etc/lightdm/lightdm.conf.d/20-lubuntu.conf
    echo autologin-user-timeout=0 >> /etc/lightdm/lightdm.conf.d/20-lubuntu.conf
    echo greeter-session=lightdm-gtk-greeter >> /etc/lightdm/lightdm.conf.d/20-lubuntu.conf
@@ -85,10 +86,13 @@ if [ ! -f "/usr/local/lib/gradle" ]; then
 fi
 
 #Install eclipse
-wget -O eclipse.tar.gz "http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/luna/SR1-RC3/eclipse-java-luna-SR1-RC3-linux-gtk-x86_64.tar.gz"
-tar -zxvf eclipse.tar.gz
-sudo mv eclipse /opt
-sudo ln -s /opt/eclipse/eclipse /usr/bin/eclipse
+file_download "${eclipse_url}" "/usr/local/lib/eclipse"
+# wget --quiet -O eclipse.tar.gz "http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/luna/SR1-RC3/eclipse-java-luna-SR1-RC3-linux-gtk-x86_64.tar.gz"
+# tar -zxvf eclipse.tar.gz
+# sudo mv eclipse /opt
+#sudo ln -s /opt/eclipse/eclipse /usr/bin/eclipse
+echo "eclipse downloaded and unzipped"
+sudo ln -s /usr/local/lib/eclipse/eclipse/eclipse /usr/bin/eclipse
 sudo touch /usr/share/applications/eclipse.desktop
 sudo sh -c "echo '[Desktop Entry]
   Version=1.0
